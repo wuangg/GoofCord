@@ -58,11 +58,19 @@ function setFlags() {
 
 	if (process.platform === "win32") {
 		enableFeatures.add("Vulkan");
+		disableFeatures.add("WinRetrieveSuggestionsOnlyOnDemand");
+		enableFeatures.add("MediaFoundationD3D11VideoCapture");
 	}
 
 	if (getConfig("performanceFlags")) {
 		console.log(pc.red("[!]") + " Setting performance switches");
 		enableFeatures.add("CanvasOopRasterization");
+		enableFeatures.add("SkiaGraphite");
+		enableFeatures.add("VideoCaptureUseGpuMemoryBuffer");
+		enableFeatures.add("WebAssemblyLazyCompilation");
+		enableFeatures.add("WebAssemblyBaseline");
+		enableFeatures.add("WebAssemblyTiering");
+		enableFeatures.add("ParallelDownloading");
 
 		switches.set("ignore-gpu-blocklist", null);
 		switches.set("enable-gpu-rasterization", null);
@@ -79,6 +87,7 @@ function setFlags() {
 
 	if (getConfig("forceDedicatedGPU")) {
 		switches.set("force_high_performance_gpu", null);
+		switches.set("force-high-performance-gpu", null);
 	}
 
 	if (disableFeatures.size > 0) {
