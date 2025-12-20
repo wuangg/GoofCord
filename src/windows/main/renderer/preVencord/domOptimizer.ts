@@ -1,15 +1,16 @@
+const DELAYED_CLASSES = /activity|gif|avatar|imagePlaceholder|hoverBar/;
 export function startDomOptimizer() {
 	if (!window.goofcord.getConfig("domOptimizer")) return;
 
 	function optimize(orig: typeof Element.prototype.removeChild) {
-		const delayedClasses = ["activity", "gif", "avatar", "imagePlaceholder", "hoverBar"];
+		//const delayedClasses = ["activity", "gif", "avatar", "imagePlaceholder", "hoverBar"];
 
 		return function (this: Element, ...args: Parameters<typeof Element.prototype.removeChild>) {
 			const element = args[0] as unknown as Element;
 			//console.log(element);
 
 			if (typeof element?.className === "string") {
-				if (delayedClasses.some((partial) => element.className.includes(partial))) {
+				if (DELAYED_CLASSES.test(element.className)) {
 					//console.log("DELAYED", element.className);
 					setTimeout(() => orig.apply(this, args), 100 - Math.random() * 50);
 					return;
