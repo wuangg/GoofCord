@@ -38,14 +38,16 @@ function setFlags() {
 	const disableFeatures = new Set([
 		"MediaSessionService",
 		"HardwareMediaKeyHandling", //
+		"UseEcoQoSForBackgroundProcess",
+		"IntensiveWakeUpThrottling",
+		"AllowAggressiveThrottlingWithWebSocket",
 	]);
 	const switches = new Map<string, string | null>([
 		["enable-speech-dispatcher", null],
-		// Prevent app unloading when backgrounded
-		// It's not certain whether this problem currently exists
-		// ["disable-renderer-backgrounding", null],
-		// ["disable-background-timer-throttling", null],
-		// ["disable-disable-backgrounding-occluded-windows", null],
+		["disable-background-timer-throttling", null],
+		["disable-dev-shm-usage", null],
+		["disable-domain-reliability", null],
+		["disable-component-extensions-with-background-pages", null],
 	]);
 
 	if (process.platform === "linux") {
@@ -65,12 +67,17 @@ function setFlags() {
 	}
 
 	if (process.platform === "win32") {
-		enableFeatures.add("Vulkan");
+		disableFeatures.add("WinRetrieveSuggestionsOnlyOnDemand");
+		enableFeatures.add("MediaFoundationD3D11VideoCapture");
 	}
 
 	if (getConfig("performanceFlags")) {
 		console.log(pc.red("[!]") + " Setting performance switches");
-		enableFeatures.add("CanvasOopRasterization");
+		enableFeatures.add("ParallelDownloading");
+		enableFeatures.add("SkiaGraphite");
+		enableFeatures.add("VideoCaptureUseGpuMemoryBuffer");
+		enableFeatures.add("WebAssemblyLazyCompilation");
+		disableFeatures.add("Vulkan");
 
 		switches.set("ignore-gpu-blocklist", null);
 		switches.set("enable-gpu-rasterization", null);
