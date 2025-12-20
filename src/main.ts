@@ -47,6 +47,9 @@ function setFlags() {
 		["disable-renderer-backgrounding", null],
 		["disable-background-timer-throttling", null],
 		["disable-disable-backgrounding-occluded-windows", null],
+		["disable-dev-shm-usage", null],
+		["disable-domain-reliability", null],
+		["disable-component-extensions-with-background-pages", null],
 
 		["enable-quic", null],
 		["enable-tcp-fast-open", null],
@@ -67,11 +70,15 @@ function setFlags() {
 
 	if (process.platform === "win32") {
 		disableFeatures.add("CalculateNativeWinOcclusion");
+		enableFeatures.add("MediaFoundationD3D11VideoCapture");
 	}
 
 	if (getConfig("performanceFlags")) {
 		console.log(pc.red("[!]") + " Setting performance switches");
 		enableFeatures.add("CanvasOopRasterization");
+		enableFeatures.add("ZeroCopyTabCapture");
+		enableFeatures.add("ParallelDownloading");
+		enableFeatures.add("SkiaGraphite");
 
 		switches.set("ignore-gpu-blocklist", null);
 		switches.set("enable-gpu-rasterization", null);
