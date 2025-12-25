@@ -8,7 +8,7 @@ import { registerAllHandlers } from "./ipc/gen.ts";
 import { initArrpc } from "./modules/arrpc/arrpc.ts";
 import { manageAssets, updateAssets } from "./modules/assets/assetDownloader.ts";
 import { categorizeAllAssets, startStyleWatcher } from "./modules/assets/assetLoader.ts";
-import { initFirewall, unstrictCSP } from "./modules/firewall.ts";
+import { initFirewall, initHeadersHandlers } from "./modules/firewall.ts";
 import { setApplicationMenu } from "./modules/menus/applicationMenu.ts";
 import { initProxy } from "./modules/proxy.ts";
 import { createTray } from "./modules/tray.ts";
@@ -36,7 +36,7 @@ export async function load() {
 
 	setPermissions();
 	initFirewall();
-	unstrictCSP();
+	initHeadersHandlers();
 	await initProxy();
 	await initConfigEncryption();
 	await decryptSettings();
