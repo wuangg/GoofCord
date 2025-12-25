@@ -1,5 +1,5 @@
 // This file contains everything that uses session.defaultSession.webRequest
-import { session } from "electron";
+import { session, OnBeforeSendHeadersListenerDetails, OnHeadersReceivedListenerDetails } from "electron";
 import pc from "picocolors";
 
 import type { Config, ConfigKey } from "../settingsSchema.ts";
@@ -31,34 +31,87 @@ export function initFirewall() {
 	const blockRegex = new RegExp(blockedStrings.join("|"), "i"); // 'i' flag for case-insensitive matching
 	const allowRegex = new RegExp(allowedStrings.join("|"), "i");
 
-	session.defaultSession.webRequest.onBeforeSendHeaders({ urls: ["<all_urls>"] }, (details, callback) => {
+	registerHeadersSendHandler(({ resourceType, url }) => {
 		// No need to filter non-xhr requests
-		if (details.resourceType !== "xhr") return callback({ cancel: false });
+		if (resourceType !== "xhr") return { cancel: false };
 
-		if (blockRegex.test(details.url)) {
-			if (!allowRegex.test(details.url)) {
-				return callback({ cancel: true });
+		if (blockRegex.test(url)) {
+			if (!allowRegex.test(url)) {
+				return { cancel: true };
 			}
 		}
 
-		callback({ cancel: false });
+		return { cancel: false };
 	});
 
 	console.log(pc.red("[Firewall]"), "Firewall initialized");
 }
 
-export function unstrictCSP() {
-	session.defaultSession.webRequest.onHeadersReceived(({ responseHeaders, resourceType }, done) => {
-		if (!responseHeaders) return done({});
+export type ResponseHeaders = Record<string, string[] | string>;
+export type HeadersReceiveResult = void | { cancel?: boolean };
+export type HeadersReceiveHandler = (details: OnHeadersReceivedListenerDetails, headers: ResponseHeaders) => HeadersReceiveResult;
 
-		//responseHeaders["access-control-allow-origin"] = ["*"];
+const headersReceiveHandlers: HeadersReceiveHandler[] = [];
+
+export function registerHeadersReceiveHandler(handler: HeadersReceiveHandler) {
+	headersReceiveHandlers.push(handler);
+}
+
+export type RequestHeaders = Record<string, string[] | string>;
+export type HeadersSendResult = void | { cancel?: boolean };
+export type HeadersSendHandler = (details: OnBeforeSendHeadersListenerDetails, headers: RequestHeaders) => HeadersSendResult;
+
+const headersSendHandlers: HeadersSendHandler[] = [];
+
+export function registerHeadersSendHandler(handler: HeadersSendHandler) {
+	headersSendHandlers.push(handler);
+}
+
+export function initHeadersHandlers() {
+	unstrictCSP();
+
+	session.defaultSession.webRequest.onBeforeSendHeaders((details, done) => {
+		const headers = details.requestHeaders;
+		if (!headers) return done({});
+
+		for (const handler of [...headersSendHandlers]) {
+			try {
+				const result = handler(details, headers);
+				if (result && result.cancel === true) return done({ cancel: true });
+			} catch (e) {
+				console.error(pc.red("[Firewall]"), "Headers send handler failed:", e);
+			}
+		}
+		done({ requestHeaders: headers });
+	});
+	session.defaultSession.webRequest.onHeadersReceived((details, done) => {
+		const headers = details.responseHeaders;
+		if (!headers) return done({});
+
+		for (const handler of [...headersReceiveHandlers]) {
+			try {
+				const result = handler(details, headers);
+				if (result && result.cancel === true) return done({ cancel: true });
+			} catch (e) {
+				console.error(pc.red("[Firewall]"), "Headers receive handler failed:", e);
+			}
+		}
+		done({ responseHeaders: headers });
+	});
+}
+
+function unstrictCSP() {
+	if ((unstrictCSP as any)._registered) return;
+    (unstrictCSP as any)._registered = true;
+
+	registerHeadersReceiveHandler(({ resourceType }, headers) => {
+		//headers["access-control-allow-origin"] = ["*"];
 		if (resourceType === "mainFrame" || resourceType === "subFrame") {
-			responseHeaders["content-security-policy"] = [""];
+			headers["content-security-policy"] = [""];
 		} else if (resourceType === "stylesheet") {
 			// Fix hosts that don't properly set the css content type, such as raw.githubusercontent.com
-			responseHeaders["content-type"] = ["text/css"];
+			headers["content-type"] = ["text/css"];
 		}
-		done({ responseHeaders });
 	});
 	console.log(pc.red("[Firewall]"), "Set up CSP unstricter");
 }
