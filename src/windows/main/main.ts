@@ -9,6 +9,7 @@ import { adjustWindow } from "../../modules/windowStateManager.ts";
 import { getConfig } from "../../stores/config/config.main.ts";
 import { dirname, getCustomIcon } from "../../utils.ts";
 import { registerScreenshareHandler } from "../screenshare/screenshare.ts";
+import { initYoutubeEmbedsFix } from "./youtubeEmbedsFix.ts";
 
 // Shaves off ~100ms
 async function preconnectToDiscord() {
@@ -78,6 +79,7 @@ async function doAfterDefiningTheWindow() {
 	setWindowOpenHandler();
 	registerScreenshareHandler();
 	initYoutubeAdblocker();
+	initYoutubeEmbedsFix(mainWindow);
 }
 
 let subscribed = false;
@@ -150,8 +152,13 @@ function initYoutubeAdblocker() {
 	mainWindow.webContents.on("frame-created", (_, { frame }) => {
 		if (!frame) return;
 		frame.once("dom-ready", () => {
-			if (frame.url.includes("youtube.com/embed/") || (frame.url.includes("discordsays") && frame.url.includes("youtube.com"))) {
-				void frame.executeJavaScript(adblocker);
+            for (const context of [frame, frame.parent]) {
+                for (const domain of ["https://www.youtube.com/embed/", "https://www.youtube-nocookie.com/embed/"]) {
+					if (context?.url.includes(domain)) {
+                        void context.executeJavaScript(`${adblocker}`);
+                        break;
+                    }
+				}
 			}
 		});
 	});
