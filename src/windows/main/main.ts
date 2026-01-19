@@ -18,6 +18,7 @@ async function preconnectToDiscord() {
 	const preconnect = (url: string) => session.defaultSession.preconnect({ url, numSockets: 4 });
 	preconnect(getConfig("discordUrl"));
 	preconnect("https://gateway.discord.gg");
+	preconnect("https://cdn.discordapp.com");
 }
 
 export let mainWindow: BrowserWindow;
