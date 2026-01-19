@@ -261,14 +261,14 @@ export const settingsSchema = {
 - Do not mix forks of the same mod (e.g., Vencord and Equicord).<br>
 - GoofCord requires a Vencord-based mod, PreVencord and PostVencord for full functionality.`,
 			defaultValue: {
-				PreVencord: "https://raw.githubusercontent.com/Milkshiift/GoofCord/refs/heads/main/assets/preVencord.js",
-				PostVencord: "https://raw.githubusercontent.com/Milkshiift/GoofCord/refs/heads/main/assets/postVencord.js",
+				PreVencord: "https://raw.githubusercontent.com/wuangg/GoofCord/refs/heads/main/assets/preVencord.js",
+				PostVencord: "https://raw.githubusercontent.com/wuangg/GoofCord/refs/heads/main/assets/postVencord.js",
 				Vencord: "https://github.com/Vendicated/Vencord/releases/download/devbuild/browser.js",
 				VencordStyles: "https://github.com/Vendicated/Vencord/releases/download/devbuild/browser.css",
 			},
 			options: [
-				["PreVencord", "https://raw.githubusercontent.com/Milkshiift/GoofCord/refs/heads/main/assets/preVencord.js"],
-				["PostVencord", "https://raw.githubusercontent.com/Milkshiift/GoofCord/refs/heads/main/assets/postVencord.js"],
+				["PreVencord", "https://raw.githubusercontent.com/wuangg/GoofCord/refs/heads/main/assets/preVencord.js"],
+				["PostVencord", "https://raw.githubusercontent.com/wuangg/GoofCord/refs/heads/main/assets/postVencord.js"],
 				["Vencord", "https://github.com/Vendicated/Vencord/releases/download/devbuild/browser.js"],
 				["VencordStyles", "https://github.com/Vendicated/Vencord/releases/download/devbuild/browser.css"],
 				["Equicord", "https://github.com/Equicord/Equicord/releases/download/latest/browser.js"],
