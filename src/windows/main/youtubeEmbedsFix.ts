@@ -11,7 +11,6 @@ import type {
 
 const TARGET_URLS = [
     "https://cdn.discordapp.com/*",
-    "https://media.discordapp.net/*"
 ];
 const FRAME_SRC_DOMAIN = "https://www.youtube-nocookie.com";
 
