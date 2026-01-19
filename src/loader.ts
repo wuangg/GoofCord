@@ -16,29 +16,37 @@ import { isDev } from "./utils.ts";
 import { createMainWindow } from "./windows/main/main.ts";
 import { createSettingsWindow } from "./windows/settings/settings.ts";
 
+async function preconnectToGitHub() {
+	const preconnect = (url: string) => session.defaultSession.preconnect({ url, numSockets: 4 });
+	preconnect("https://raw.githubusercontent.com");
+	preconnect("https://github.com");
+	preconnect("https://objects.githubusercontent.com");
+}
+
 export async function load() {
 	void setAutoLaunchState();
 	void setApplicationMenu();
 	void createTray();
+	
 	await runMigrations();
-
 	await waitForInternetConnection();
 
+	console.time(pc.green("[Timer]") + " Electron loaded in");
+	await app.whenReady();
+	console.timeEnd(pc.green("[Timer]") + " Electron loaded in");
+
+	void preconnectToGitHub();
+
+	setPermissions();
 	const modPromise = manageAssets().then(async (assetsMissing) => {
 		if (assetsMissing) await updateAssets();
 		await categorizeAllAssets();
 	});
 	registerAllHandlers();
 	initEncryption();
-
-	console.time(pc.green("[Timer]") + " Electron loaded in");
-	await app.whenReady();
-	console.timeEnd(pc.green("[Timer]") + " Electron loaded in");
-
-	setPermissions();
+	await modPromise;
 	initFirewall();
 	unstrictCSP();
-	await modPromise;
 	firstLaunch ? await createSettingsWindow() : await createMainWindow();
 
 	console.timeEnd(pc.green("[Timer]") + " GoofCord fully loaded in");
