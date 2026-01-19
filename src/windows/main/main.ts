@@ -16,8 +16,12 @@ import { initYoutubeEmbedsFix } from "./youtubeEmbedsFix.ts";
 // Shaves off ~100ms
 async function preconnectToDiscord() {
 	const preconnect = (url: string) => session.defaultSession.preconnect({ url, numSockets: 4 });
-	preconnect(getConfig("discordUrl"));
-	preconnect("https://gateway.discord.gg");
+	Promise.all([
+		preconnect(getConfig("discordUrl")),
+		preconnect("https://gateway.discord.gg"),
+		preconnect("https://github.com"),
+		preconnect("https://raw.githubusercontent.com")
+	])
 }
 
 export let mainWindow: BrowserWindow;
