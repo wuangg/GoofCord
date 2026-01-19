@@ -16,6 +16,13 @@ import { decryptSettings, firstLaunch, initConfigEncryption } from "./stores/con
 import { createMainWindow } from "./windows/main/main.ts";
 import { createSettingsWindow } from "./windows/settings/settings.ts";
 
+async function preconnectToGitHub() {
+	const preconnect = (url: string) => session.defaultSession.preconnect({ url, numSockets: 4 });
+	preconnect("https://raw.githubusercontent.com");
+	preconnect("https://github.com");
+	preconnect("https://objects.githubusercontent.com");
+}
+
 export async function load() {
 	void setApplicationMenu();
 	void createTray();
@@ -23,17 +30,18 @@ export async function load() {
 
 	await waitForInternetConnection();
 
-	const modPromise = manageAssets().then(async (assetsMissing) => {
-		if (assetsMissing) await updateAssets();
-		await categorizeAllAssets();
-	});
-	registerAllHandlers();
-
 	console.time(pc.green("[Timer]") + " Electron loaded in");
 	await app.whenReady();
 	console.timeEnd(pc.green("[Timer]") + " Electron loaded in");
 
+	void preconnectToGitHub();
+	registerAllHandlers();
+
 	setPermissions();
+	const modPromise = manageAssets().then(async (assetsMissing) => {
+		if (assetsMissing) await updateAssets();
+		await categorizeAllAssets();
+	});
 	initFirewall();
 	unstrictCSP();
 	await initProxy();
