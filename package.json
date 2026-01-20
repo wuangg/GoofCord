@@ -36,7 +36,7 @@
     "typescript": "5.9.3"
   },
   "dependencies": {
-    "arrpc": "github:Milkshiift/arrpc",
+    "arrpc": "github:wuangg/arrpc",
     "auto-launch": "github:Teamwork/node-auto-launch",
     "electron-sync-store": "github:Milkshiift/electron-sync-store",
     "picocolors": "1.1.1",
