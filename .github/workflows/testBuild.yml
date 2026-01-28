@@ -68,3 +68,4 @@ jobs:
             dist/**/*.rpm
             dist/**/*.zip
             dist/**/*.dmg
+            dist/**/*.exe
