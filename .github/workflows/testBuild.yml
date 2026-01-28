@@ -17,7 +17,7 @@ jobs:
             arch: "--x64 --arm64 --armv7l"
           - name: win
             runner: windows-latest
-            targets: "zip"
+            targets: "zip nsis"
             arch: "--x64 --ia32 --arm64"
           - name: mac
             runner: macos-latest
@@ -41,19 +41,21 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "24.x"
+          node-version: "25.x"
 
       - name: Install Node dependencies
         run: bun install --frozen-lockfile
 
-      - name: Install electron-builder globally
-        run: bun add electron-builder -g
+#      - name: Install electron-builder globally
+#        run: bun add electron-builder -g
 
-      - name: Build GoofCord
-        run: bun run build
+#      - name: Build GoofCord
+#        run: bun run build
 
       - name: Package GoofCord
-        run: electron-builder ${{ matrix.arch }} --${{ matrix.name }} ${{ matrix.targets }} --publish=never
+        env:
+          NODE_OPTIONS: "--max-old-space-size=16384"
+        run: bunx electron-builder ${{ matrix.arch }} --${{ matrix.name }} ${{ matrix.targets }} --publish=never
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
