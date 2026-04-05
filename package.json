@@ -27,7 +27,7 @@
 		"check": "tsc"
 	},
 	"dependencies": {
-		"arrpc": "github:Milkshiift/arrpc",
+		"arrpc": "github:wuangg/arrpc",
 		"electron-sync-store": "github:Milkshiift/electron-sync-store",
 		"picocolors": "1.1.1",
 		"preact": "^11.0.0",
