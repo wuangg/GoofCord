@@ -5,6 +5,7 @@ import { initKeybinds } from "@root/src/windows/main/renderer/postVencord/keybin
 import { initDynamicIcon } from "./dynamicIcon.ts";
 import { updateInvidiousInstance } from "./invidiousEmbeds.ts";
 import { initMessageEncryption } from "./messageEncryption.ts";
+import { patchNoTypingAnimationPlugin } from "./noTypingAnimationPluginPatch.ts";
 import { initQuickCssFix } from "./quickCssFix.ts";
 import { initRichPresence } from "./richPresence.ts";
 import { patchScreenshare } from "./screensharePatch.ts";
@@ -31,7 +32,7 @@ async function init() {
 
 	await VC.Webpack.onceReady;
 
-	runSafe([initDynamicIcon, patchScreenshare, initSettingsButton, initMessageEncryption, initQuickCssFix, initKeybinds]);
+	runSafe([initDynamicIcon, patchNoTypingAnimationPlugin, patchScreenshare, initSettingsButton, initMessageEncryption, initQuickCssFix, initKeybinds]);
 }
 
 void init();
