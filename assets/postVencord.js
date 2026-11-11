@@ -1,5 +1,22 @@
 // postvencordmarker
 
+// src/windows/main/renderer/postVencord/disableWebPWAPlugin.ts
+function disableWebPWAPlugin() {
+  console.log("Disabling WebPWA Vencord plugin...");
+  const plugin = VC?.Plugins?.plugins?.WebPWA;
+  const settings = VC?.Settings?.plugins?.WebPWA;
+  if (!plugin) {
+    console.warn("WebPWA Vencord plugin unavailable");
+    return;
+  }
+  if (!settings) {
+    console.warn("WebPWA Vencord settings unavailable");
+    return;
+  }
+  plugin.enabledByDefault = false;
+  settings.enabled = false;
+}
+
 // src/windows/main/renderer/postVencord/disableWebScreensharePlugin.ts
 function disableWebScreensharePlugin() {
   console.log("Disabling WebScreenShare Vencord plugin...");
@@ -394,7 +411,7 @@ function runSafe(tasks) {
   }
 }
 async function init() {
-  runSafe([updateInvidiousInstance, initRichPresence, disableWebScreensharePlugin]);
+  runSafe([updateInvidiousInstance, initRichPresence, disableWebPWAPlugin, disableWebScreensharePlugin]);
   await VC.Webpack.onceReady;
   runSafe([initDynamicIcon, patchScreenshare, initSettingsButton, initMessageEncryption, initQuickCssFix, initKeybinds]);
 }
