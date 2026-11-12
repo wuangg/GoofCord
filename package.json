@@ -1,17 +1,17 @@
 {
 	"name": "goofcord",
-	"desktopName": "io.github.milkshiift.GoofCord",
+	"desktopName": "net.feupvp.GoofCord",
 	"version": "2.3.1",
-	"description": "Take control of your Discord experience with GoofCord – the highly configurable and privacy-minded discord client.",
-	"homepage": "https://github.com/Milkshiift/GoofCord",
+	"description": "A fork of GoofCord – the highly configurable and privacy-minded discord client.",
+	"homepage": "https://github.com/wuangg/GoofCord",
 	"bugs": {
-		"url": "https://github.com/Milkshiift/GoofCord/issues"
+		"url": "https://github.com/wuangg/GoofCord/issues"
 	},
 	"license": "OSL-3.0",
-	"author": "MilkShift",
+	"author": "MilkShift (original author), wuangg (fork maintainer)",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/Milkshiift/GoofCord"
+		"url": "git+https://github.com/wuangg/GoofCord"
 	},
 	"type": "module",
 	"main": "ts-out/main.js",
